@@ -1,1 +1,1 @@
-A repository containing some Docker files
+Builds an Ubuntu Docker image for a Jenkins master v1.573
