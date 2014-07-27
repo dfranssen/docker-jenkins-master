@@ -1,1 +1,1 @@
-Builds an Ubuntu Docker image for a Jenkins master v1.573
+Builds a Jenkins master v1.574 based on the image dfranssen/docker-base
