@@ -25,7 +25,7 @@ ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.
 
 EXPOSE 8080 50000
 
-ADD jenkins-plugins.txt
+ADD jenkins-plugins.txt /opt/jenkins-plugins.txt
 ADD start-jenkins.sh /opt/start-jenkins.sh
 RUN chmod 644 /opt/jenkins.war && chmod 644 /opt/start-jenkins.sh
 ENTRYPOINT /opt/start-jenkins.sh
