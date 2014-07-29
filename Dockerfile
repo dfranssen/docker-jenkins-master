@@ -5,17 +5,16 @@ RUN apt-get install -qy git zip && apt-get clean
 
 ENV JENKINS_VERSION 1.574
 ENV JENKINS_HOME /var/jenkins_home
+VOLUME /var/jenkins_home
 
+#RUN mkdir -p $JENKINS_HOME/plugins
 
 ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.war
-RUN mkdir -p $JENKINS_HOME
-RUN chmod 644 /opt/jenkins.war
-
-VOLUME $JENKINS_HOME
 
 #Add plugins
-RUN mkdir -p $JENKINS_HOME/plugins
-RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/build-pipeline-plugin/1.4.3/build-pipeline-plugin.hpi)
+#RUN mkdir -p $JENKINS_HOME/plugins
+#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/hipchat/0.1.6/hipchat.hpi
+#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/build-pipeline-plugin/1.4.3/build-pipeline-plugin.hpi)
 #RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/parameterized-trigger/2.17/parameterized-trigger.hpi)
 #RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/jquery/1.7.2-1/jquery.hpi)
 #RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/dashboard-view/2.2/dashboard-view.hpi)
@@ -26,8 +25,10 @@ RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenki
 
 EXPOSE 8080 50000
 
-CMD ["$JAVA_OPTS"]
-ENTRYPOINT ["java", "-jar", "/opt/jenkins.war"]
+ADD jenkins-plugins.txt
+ADD start-jenkins.sh /opt/start-jenkins.sh
+RUN chmod 644 /opt/jenkins.war && chmod 644 /opt/start-jenkins.sh
+ENTRYPOINT /opt/start-jenkins.sh
 
 #todo's:
 #- install maven3, or only in the slave
@@ -37,5 +38,5 @@ ENTRYPOINT ["java", "-jar", "/opt/jenkins.war"]
 #- expose port to attach build slaves (docker slaves)
 #- volume container instead
 
-# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home dfranssen/docker-jenkins-master
-# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
+# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 dfranssen/docker-jenkins-master
+# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
