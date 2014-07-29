@@ -6,12 +6,12 @@ cd $JENKINS_HOME/plugins
 
 for line in $(cat /opt/jenkins-plugins.txt)
 do
-  plugin=$(echo $line | cut -f1 -d;)
-  version=$(echo $STR | cut -f2 -d;)
-  if find ./${plugin} -maxdepth 0 -empty | read v; then
-    (echo "Adding Jenkins Plugin: ${plugin} version ${version}..." && \
-    wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$plugin/$version/$plugin.hpi)
+  IFS='/' read -a array <<< "$line"
+  if [ ! -f ${array[0]}.hpi ]
+  then
+    echo "Adding Jenkins Plugin: ${array[0]} version ${array[1]}..." && \
+    wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/${array[0]}/${array[1]}/${array[0]}.hpi
   fi
 done
 
-exec su root -c "java -jar /opt/jenkins.war $JAVA_OPTS"
+exec su root -c "$JAVA_HOME/bin/java -jar /opt/jenkins.war $JAVA_OPTS"

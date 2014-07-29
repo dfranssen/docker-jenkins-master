@@ -1,1 +1,4 @@
-hipchat;0.1.6
+hipchat/0.1.6
+build-pipeline-plugin/1.4.3
+parameterized-trigger/2.17
+jquery/1.7.2-1

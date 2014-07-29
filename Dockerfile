@@ -7,34 +7,25 @@ ENV JENKINS_VERSION 1.574
 ENV JENKINS_HOME /var/jenkins_home
 VOLUME /var/jenkins_home
 
-#RUN mkdir -p $JENKINS_HOME/plugins
-
 ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.war
-
-#Add plugins
-#RUN mkdir -p $JENKINS_HOME/plugins
-#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/hipchat/0.1.6/hipchat.hpi
-#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/build-pipeline-plugin/1.4.3/build-pipeline-plugin.hpi)
-#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/parameterized-trigger/2.17/parameterized-trigger.hpi)
-#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/jquery/1.7.2-1/jquery.hpi)
-#RUN (cd $JENKINS_HOME/plugins && wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/dashboard-view/2.2/dashboard-view.hpi)
 
 #bootstrap slave agents on jnlp port 50000
 #ADD init.groovy /tmp/WEB-INF/init.groovy
 #RUN cd /tmp && zip -g /opt/jenkins.war WEB-INF/init.groovy
 
-EXPOSE 8080 50000
-
 ADD jenkins-plugins.txt /opt/jenkins-plugins.txt
 ADD start-jenkins.sh /opt/start-jenkins.sh
-RUN chmod 644 /opt/jenkins.war && chmod 644 /opt/start-jenkins.sh
-ENTRYPOINT /opt/start-jenkins.sh
+RUN chmod 644 /opt/jenkins.war && chmod +x /opt/start-jenkins.sh
+
+EXPOSE 8080 50000
+
+ENTRYPOINT ["/opt/start-jenkins.sh"]
 
 #todo's:
 #- install maven3, or only in the slave
 #- add relevant plugins
 #- add servlet container and security
-#- don't run as root
+#- don't run as root?
 #- expose port to attach build slaves (docker slaves)
 #- volume container instead
 
