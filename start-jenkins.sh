@@ -14,4 +14,4 @@ do
   fi
 done
 
-exec su jenkins -c "java -jar /opt/jenkins.war $JAVA_OPTS"
+exec su root -c "java -jar /opt/jenkins.war $JAVA_OPTS"
