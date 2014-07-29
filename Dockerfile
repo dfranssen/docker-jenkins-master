@@ -11,8 +11,8 @@ RUN mkdir -p $JENKINS_HOME
 RUN chmod 644 /opt/jenkins.war
 
 #bootstrap slave agents on jnlp port 50000
-ADD init.groovy /tmp/WEB-INF/init.groovy
-RUN cd /tmp && zip -g /opt/jenkins.war WEB-INF/init.groovy
+#ADD init.groovy /tmp/WEB-INF/init.groovy
+#RUN cd /tmp && zip -g /opt/jenkins.war WEB-INF/init.groovy
 
 EXPOSE 8080 50000
 
