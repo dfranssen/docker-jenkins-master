@@ -11,7 +11,11 @@ ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.
 #create helper script
 RUN echo "#!/bin/bash" > /opt/getJenkinsPlugin.sh && \
     echo "set -e" >> /opt/getJenkinsPlugin.sh && \
-    echo "if [ ! -f $1.hpi ] then" >> /opt/getJenkinsPlugin.sh && \ 
+    echo "if [ ! -f $1.hpi ]" >> /opt/getJenkinsPlugin.sh && \ 
+    echo "then" >> /opt/getJenkinsPlugin.sh && \ 
+    echo "-----------------------"
+    echo "Getting Jenkins Plugin: $1 version $2"
+    echo "-----------------------"
     echo "wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi" >> /opt/getJenkinsPlugin.sh && \ 
     echo "fi" >> /opt/getJenkinsPlugin.sh
 
