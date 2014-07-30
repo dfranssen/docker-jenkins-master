@@ -8,6 +8,8 @@ ENV JENKINS_HOME /var/jenkins_home
 
 ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.war
 
+RUN mkdir -p $JENKINS_HOME/plugins
+
 #create helper script
 RUN echo "#!/bin/bash" > $JENKINS_HOME/getJenkinsPlugin.sh && \
     echo "set -e" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
@@ -25,8 +27,6 @@ RUN chmod 644 /opt/jenkins.war && chmod +x $JENKINS_HOME/getJenkinsPlugin.sh
 #VOLUME /var/jenkins_home
 
 #Add plugins
-RUN mkdir -p $JENKINS_HOME/plugins
-
 WORKDIR $JENKINS_HOME/plugins
 #RUN ["../getJenkinsPlugin.sh", "build-pipeline-plugin", "1.4.3"]
 #RUN ["../getJenkinsPlugin.sh", "parameterized-trigger", "2.17"]
