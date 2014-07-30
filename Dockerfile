@@ -11,15 +11,15 @@ ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.
 RUN mkdir -p $JENKINS_HOME/plugins
 
 #create helper script
-RUN echo "#!/bin/bash" > /opt/getJenkinsPlugin.sh && \
-    echo "set -e" >> /opt/getJenkinsPlugin.sh && \
-    echo "if [ ! -f $1.hpi ]" >> /opt/getJenkinsPlugin.sh && \ 
-    echo "then" >> /opt/getJenkinsPlugin.sh && \ 
-    echo "-----------------------" >> /opt/getJenkinsPlugin.sh && \
-    echo "Getting Jenkins Plugin: $1 version $2" >> /opt/getJenkinsPlugin.sh && \
-    echo "-----------------------" >> /opt/getJenkinsPlugin.sh && \
-    echo "wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi" >> /opt/getJenkinsPlugin.sh && \
-    echo "fi" >> /opt/getJenkinsPlugin.sh
+RUN echo '#!/bin/bash' > /opt/getJenkinsPlugin.sh && \
+    echo 'set -e' >> /opt/getJenkinsPlugin.sh && \
+    echo 'if [ ! -f $1.hpi ]' >> /opt/getJenkinsPlugin.sh && \ 
+    echo 'then' >> /opt/getJenkinsPlugin.sh && \ 
+    echo '-----------------------' >> /opt/getJenkinsPlugin.sh && \
+    echo 'Getting Jenkins Plugin: $1 version $2' >> /opt/getJenkinsPlugin.sh && \
+    echo '-----------------------' >> /opt/getJenkinsPlugin.sh && \
+    echo 'wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi' >> /opt/getJenkinsPlugin.sh && \
+    echo 'fi' >> /opt/getJenkinsPlugin.sh
 
 RUN chmod 644 /opt/jenkins.war && chmod +x /opt/getJenkinsPlugin.sh
 
@@ -27,12 +27,12 @@ RUN chmod 644 /opt/jenkins.war && chmod +x /opt/getJenkinsPlugin.sh
 #VOLUME /var/jenkins_home
 
 #Add plugins
-WORKDIR $JENKINS_HOME/plugins
-#RUN ["../getJenkinsPlugin.sh", "build-pipeline-plugin", "1.4.3"]
-#RUN ["../getJenkinsPlugin.sh", "parameterized-trigger", "2.17"]
-#RUN ["../getJenkinsPlugin.sh", "jquery", "1.7.2-1"]
-#RUN ["../getJenkinsPlugin.sh", "dashboard-view", "2.2"]
-#RUN ["../getJenkinsPlugin.sh", "hipchat", "0.1.6"]
+WORKDIR /var/jenkins_home
+RUN ["../getJenkinsPlugin.sh", "build-pipeline-plugin", "1.4.3"]
+RUN ["../getJenkinsPlugin.sh", "parameterized-trigger", "2.17"]
+RUN ["../getJenkinsPlugin.sh", "jquery", "1.7.2-1"]
+RUN ["../getJenkinsPlugin.sh", "dashboard-view", "2.2"]
+RUN ["../getJenkinsPlugin.sh", "hipchat", "0.1.6"]
 
 EXPOSE 8080 50000
 
