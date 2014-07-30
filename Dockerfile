@@ -19,7 +19,7 @@ RUN echo "#!/bin/bash" > $JENKINS_HOME/getJenkinsPlugin.sh && \
     echo "Getting Jenkins Plugin: $1 version $2" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
     echo "-----------------------" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
     echo "wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "fi" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
+    echo "fi" >> $JENKINS_HOME/getJenkinsPlugin.sh
 
 RUN chmod 644 /opt/jenkins.war && chmod +x $JENKINS_HOME/getJenkinsPlugin.sh
 
