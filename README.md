@@ -7,20 +7,15 @@ This image includes the following Jenkins plugins:
  - dashboard-view/2.2
  - hipchat/0.1.6
 
-Best to run first a data container (in order to update a future image without loosing data):
+'ATTENTION!` The plugins will not be available if volume is bound from another container (with --volumes-from). This means if the jenkins container will be removed (e.g. to update to a newer image), the data will also be detached as the new container will get a new reference in the host (/var/lib/docker/vfs/dir)
+
 
 ```Shell
-docker run -d --name myjenkins-data -v /var/jenkins_home busybox:ubuntu-14.04
-```
-
-And bind it to the jenkins container:
-
-```Shell
-docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data dfranssen/docker-jenkins-master
+docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home dfranssen/docker-jenkins-master
 ```
 
 OR with additional JAVA_OPTS:
 
 ```Shell
-docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
+docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
 ```
