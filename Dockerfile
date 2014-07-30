@@ -11,17 +11,17 @@ ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.
 RUN mkdir -p $JENKINS_HOME/plugins
 
 #create helper script
-RUN echo "#!/bin/bash" > $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "set -e" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "if [ ! -f $1.hpi ]" >> $JENKINS_HOME/getJenkinsPlugin.sh && \ 
-    echo "then" >> $JENKINS_HOME/getJenkinsPlugin.sh && \ 
-    echo "-----------------------" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "Getting Jenkins Plugin: $1 version $2" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "-----------------------" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi" >> $JENKINS_HOME/getJenkinsPlugin.sh && \
-    echo "fi" >> $JENKINS_HOME/getJenkinsPlugin.sh
+RUN echo "#!/bin/bash" > /opt/getJenkinsPlugin.sh && \
+    echo "set -e" >> /opt/getJenkinsPlugin.sh && \
+    echo "if [ ! -f $1.hpi ]" >> /opt/getJenkinsPlugin.sh && \ 
+    echo "then" >> /opt/getJenkinsPlugin.sh && \ 
+    echo "-----------------------" >> /opt/getJenkinsPlugin.sh && \
+    echo "Getting Jenkins Plugin: $1 version $2" >> /opt/getJenkinsPlugin.sh && \
+    echo "-----------------------" >> /opt/getJenkinsPlugin.sh && \
+    echo "wget --no-check-certificat http://updates.jenkins-ci.org/download/plugins/$1/$2/$1.hpi" >> /opt/getJenkinsPlugin.sh && \
+    echo "fi" >> /opt/getJenkinsPlugin.sh
 
-RUN chmod 644 /opt/jenkins.war && chmod +x $JENKINS_HOME/getJenkinsPlugin.sh
+RUN chmod 644 /opt/jenkins.war && chmod +x /opt/getJenkinsPlugin.sh
 
 #It is not possible to CD into that volume in the RUN instructions below
 #VOLUME /var/jenkins_home
