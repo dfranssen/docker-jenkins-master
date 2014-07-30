@@ -27,12 +27,12 @@ RUN chmod 644 /opt/jenkins.war && chmod +x /opt/getJenkinsPlugin.sh
 #VOLUME /var/jenkins_home
 
 #Add plugins
-WORKDIR /var/jenkins_home
-RUN /opt/getJenkinsPlugin.sh build-pipeline-plugin 1.4.3
-RUN /opt/getJenkinsPlugin.sh parameterized-trigger 2.17
-RUN /opt/getJenkinsPlugin.sh jquery 1.7.2-1
-RUN /opt/getJenkinsPlugin.sh dashboard-view 2.2
-RUN /opt/getJenkinsPlugin.sh hipchat 0.1.6
+RUN cd $JENKINS_HOME/plugins && \
+    /opt/getJenkinsPlugin.sh build-pipeline-plugin 1.4.3 && \
+    /opt/getJenkinsPlugin.sh parameterized-trigger 2.17 && \
+    /opt/getJenkinsPlugin.sh jquery 1.7.2-1 && \
+    /opt/getJenkinsPlugin.sh dashboard-view 2.2 && \
+    /opt/getJenkinsPlugin.sh hipchat 0.1.6
 
 EXPOSE 8080 50000
 
