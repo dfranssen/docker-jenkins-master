@@ -7,7 +7,6 @@ ENV JENKINS_VERSION 1.574
 ENV JENKINS_HOME /var/jenkins_home
 
 ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.war
-ADD getJenkinsPlugin.sh /opt/getJenkinsPlugin.sh
 
 #create helper script
 RUN echo "#!/bin/bash" > /opt/getJenkinsPlugin.sh && \
