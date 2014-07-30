@@ -27,12 +27,12 @@ RUN chmod 644 /opt/jenkins.war && chmod +x /opt/getJenkinsPlugin.sh
 #Add plugins
 RUN mkdir -p $JENKINS_HOME/plugins
 
-RUN cd $JENKINS_HOME/plugins && \
-    /opt/getJenkinsPlugin.sh build-pipeline-plugin 1.4.3 && \
-    /opt/getJenkinsPlugin.sh parameterized-trigger 2.17 && \
-    /opt/getJenkinsPlugin.sh jquery 1.7.2-1 && \
-    /opt/getJenkinsPlugin.sh dashboard-view 2.2 && \
-    /opt/getJenkinsPlugin.sh hipchat 0.1.6
+WORKDIR $JENKINS_HOME/plugins
+RUN ["/opt/getJenkinsPlugin.sh", "build-pipeline-plugin", "1.4.3"]
+RUN ["/opt/getJenkinsPlugin.sh", "parameterized-trigger", "2.17"]
+RUN ["/opt/getJenkinsPlugin.sh", "jquery", "1.7.2-1"]
+RUN ["/opt/getJenkinsPlugin.sh", "dashboard-view", "2.2"]
+RUN ["/opt/getJenkinsPlugin.sh", "hipchat", "0.1.6"]
 
 EXPOSE 8080 50000
 
@@ -47,5 +47,7 @@ ENTRYPOINT ["java", "-jar", "/opt/jenkins.war"]
 #- expose port to attach build slaves (docker slaves)
 #- volume container, otherwise persistent volume will be gone if jenkins container is removed (e.g. image update)
 
-# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home dfranssen/docker-jenkins-master
-# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_home -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
+# docker run -d --name myjenkins-data -v /var/jenkins_home busybox:ubuntu-14.04
+# docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data dfranssen/docker-jenkins-master
+# OR docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
+
