@@ -1,13 +1,21 @@
-docker-jenkins
-==============
-    OS Base : Ubuntu 14.04
-    Jenkins version : 1.574
+docker-jenkins-master
+=====================
+    Image Base : dfranssen/docker-base
+
     Exposed Ports : 8080 2812 22 36562 33848/udp
-    Jenkins Home : /var/lib/jenkins
     Timezone : Europe/Brussels
+
+    Jenkins version : 1.574
+    Jenkins Home : /var/lib/jenkins
+
+    Maven version : 3.2.2
+    Maven Home : /var/lib/maven/maven-3.2.2
 
 Environment Variables
 ---------------------
+    MAVEN_OPTS
+        Arguments to pass to maven. Default : '-Xms256m -Xmx512m'
+
     JENKINS_JAVA_ARGS
         Arguments to pass to Java when Jenkins starts. Default : '-Djava.awt.headless=true'
     JENKINS_MAXOPENFILES
@@ -32,6 +40,7 @@ When running the image, you can pass in environment variables that will affect t
 An example, you change the Timezone by runnning:
 
     docker run --env TZ=<TIMEZONE> -d <CONTAINER_ID>
+
 Or change Java heap size:
 
     docker run --env JENKINS_JAVA_ARGS=-Xmx4g -d <CONTAINER_ID>
@@ -41,7 +50,7 @@ facilitate the backup/restore of the jenkins home folder, it is best to add the 
 in the run instruction of above.
 The data container could be started by running:
 
-    docker run -d --name myjenkins-data busybox:ubuntu-14.04 true
+    docker run -d --name myjenkins-data -v /var/lib/jenkins -v busybox:ubuntu-14.04 true
 
 Monit is used to control the start up and management of Jenkins (and SSHD). You can access the monit webserver
 by exposing port 2812 on the Docker host. The user name is `monit` and password can be found by running:
@@ -77,10 +86,17 @@ The following list of plugins come included in the container:
     clone-workspace-scm
     matrix-combinations-parameter
     job-exporter
-    It is possible to customise the plugins that get added to the image by updating:
+    email-ext
+    m2release
+    next-build-number
+    claim
+    cloudbees-folder
+    jira
+
+It is possible to customise the plugins that get added to the image by updating:
 
     ./plugins_script/plugins.txt
 
 You don't need to worry about plugin dependencies, they are resolved when you build the image.
 
-Kudos to [yasn77] {https://github.com/yasn77/docker-jenkins.git} for the inspiration.
+Kudos to [yasn77] (https://github.com/yasn77/docker-jenkins.git) for the inspiration.
