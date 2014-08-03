@@ -1,25 +1,59 @@
 FROM dfranssen/docker-base
+
 MAINTAINER Dirk Franssen "dirk.franssen@gmail.com"
 
-RUN apt-get install -qy git zip && apt-get clean
+ENV MAVEN_VERSION 3.2.2
+ENV JENKINS_VER 1.574
 
-ENV JENKINS_VERSION 1.574
-ENV JENKINS_HOME /var/jenkins_home
-VOLUME /var/jenkins_home
+# Maven related
+# -------------
+ENV MAVEN_ROOT /var/lib/maven
+ENV MAVEN_HOME $MAVEN_ROOT/maven-$MAVEN_VERSION
+ENV MAVEN_OPTS -Xms256m -Xmx512m
 
-ADD http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war /opt/jenkins.war
+RUN wget --no-verbose -O /tmp/apache-maven-$MAVEN_VERSION.tar.gz \
+    http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    echo "87e5cc81bc4ab9b83986b3e77e6b3095  /tmp/apache-maven-$MAVEN_VERSION.tar.gz" | md5sum -c && \
+    mkdir -p $MAVEN_ROOT && \
+    tar xzf /tmp/apache-maven-$MAVEN_VERSION.tar.gz -C $MAVEN_ROOT && \
+    ln -s $MAVEN_ROOT/$MAVEN_VERSION/bin/mvn /usr/local/bin && \
+    rm -f /tmp/apache-maven-$MAVEN_VERSION.tar.gz
 
-ADD jenkins-plugins.txt /opt/jenkins-plugins.txt
-ADD start-jenkins.sh /opt/start-jenkins.sh
-RUN chmod 644 /opt/jenkins.war && chmod +x /opt/start-jenkins.sh
+VOLUME ["/var/lib/maven"]
 
-EXPOSE 8080 50000
+# Jenkins related
+# ---------------
+VOLUME ["/var/lib/jenkins"]
 
-ENTRYPOINT ["/opt/start-jenkins.sh"]
+ENV JENKINS_HOME /var/lib/jenkins
+ENV JENKINS_JAVA_ARGS '-Djava.awt.headless=true'
+ENV JENKINS_MAXOPENFILES 8192
+ENV JENKINS_PREFIX /jenkins
+ENV JENKINS_ARGS '--webroot=/var/cache/jenkins/war --httpPort=8080 --ajp13Port=-1 --prefix=$JENKINS_PREFIX'
+ENV TZ Europe/Brussels
+ENV DEBIAN_FRONTEND noninteractive
 
-#todo's:
-#- install maven3, or only in the slave?
-#- add more relevant plugins
-#- add servlet container and security?
-#- don't run as root?
-#- expose port to attach build slaves (docker slaves)
+EXPOSE 8080 2812 22 36562 33848/udp
+
+RUN apt-get -y install \
+            openssh-server \
+            openjdk-7-jre-headless \
+            monit \
+            curl \
+            git \
+            subversion
+
+ADD ./monit.d/ /etc/monit/conf.d/
+ADD ./jenkins.sudoers /etc/sudoers.d/jenkins
+ADD ./jenkins_init_wrapper.sh /jenkins_init_wrapper.sh
+ADD ./plugins_script /plugins_script
+ADD ./start.sh /start.sh
+ADD ./config.xml $JENKINS_HOME/config.xml
+
+RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/debian/binary/jenkins_${JENKINS_VER}_all.deb && \
+        dpkg -i /tmp/jenkins_${JENKINS_VER}_all.deb ; \
+        apt-get -fy install
+
+RUN /plugins_script/download_plugins.sh
+
+ENTRYPOINT ["/bin/bash", "/start.sh"]

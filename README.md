@@ -1,26 +1,102 @@
-Builds a Jenkins master v1.574 based on the docker image `dfranssen/docker-base`.
+docker-jenkins-master
+=====================
+    Image Base : dfranssen/docker-base
 
-This image includes the following Jenkins plugins:
- - build-pipeline-plugin/1.4.3
- - parameterized-trigger/2.17
- - jquery/1.7.2-1
- - dashboard-view/2.2
- - hipchat/0.1.6
+    Exposed Ports : 8080 2812 22 36562 33848/udp
+    Timezone : Europe/Brussels
 
-Best to run first a data container (in order to update a future image without loosing data):
+    Jenkins version : 1.574
+    Jenkins Home : /var/lib/jenkins
 
-```Shell
-docker run -d --name myjenkins-data -v /var/jenkins_home busybox:ubuntu-14.04
-```
+    Maven version : 3.2.2
+    Maven Home : /var/lib/maven/maven-3.2.2
 
-And bind it to the jenkins container:
+Environment Variables
+---------------------
+    MAVEN_OPTS
+        Arguments to pass to maven. Default : '-Xms256m -Xmx512m'
 
-```Shell
-docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data dfranssen/docker-jenkins-master
-```
+    JENKINS_JAVA_ARGS
+        Arguments to pass to Java when Jenkins starts. Default : '-Djava.awt.headless=true'
+    JENKINS_MAXOPENFILES
+        Ulimit maxopenfiles for Jenkins. Default '8192'
+    JENKINS_PREFIX
+        URL prefix. Default '/jenkins'
+    JENKINS_ARGS
+        Start up arguements for Jenkins. Default '--webroot=/var/cache/jenkins/war --httpPort=8080 --ajp13Port=-1 --prefix=$JENKINS_PREFIX'
+    JENKINS_SLAVE_JNLP
+        JNLP port for Jenkins Slave communication. Default : 36562
+    TZ
+        Container Timezone. Default 'Europe/Brussels'
 
-OR with additional JAVA_OPTS:
+Services
+--------
+    Jenkins
+    Monit
+    SSHD
 
-```Shell
-docker run --name myjenkins -d -p 8080:8080 -p 50000:50000 --volumes-from myjenkins-data -e 'JAVA_OPTS="-Xmx=512m,-Xms=256m"' dfranssen/docker-jenkins-master
-```
+
+When running the image, you can pass in environment variables that will affect the behaviour of Jenkins.
+An example, you change the Timezone by runnning:
+
+    docker run --env TZ=<TIMEZONE> -d <CONTAINER_ID>
+
+Or change Java heap size:
+
+    docker run --env JENKINS_JAVA_ARGS=-Xmx4g -d <CONTAINER_ID>
+
+If you want to preserve the volume after the container has been removed (e.g update of the image) or want to
+facilitate the backup/restore of the jenkins home folder, it is best to add the option `--volumes-from myjenkins-data`
+in the run instruction of above.
+The data container could be started by running:
+
+    docker run -d --name myjenkins-data -v /var/lib/jenkins -v busybox:ubuntu-14.04 true
+
+Monit is used to control the start up and management of Jenkins (and SSHD). You can access the monit webserver
+by exposing port 2812 on the Docker host. The user name is `monit` and password can be found by running:
+
+    docker logs <CONTAINER_ID> 2>/dev/null | grep MONIT_PASSWORD
+
+OpenSSH is also running, you can ssh to the container by exposing port 22 on your Docker host and using the username
+`jenkins`. Password can be found by running:
+
+    docker logs <CONTAINER_ID> 2>/dev/null | grep JENKINS_PASSWORD
+
+Plugins
+-------
+
+The following list of plugins come included in the container:
+
+    config-file-provider
+    envinject
+    git
+    git-client
+    git-server
+    github
+    greenballs
+    multiple-scms
+    parameterized-trigger
+    promoted-builds
+    scm-sync-configuration
+    scriptler
+    swarm
+    xunit
+    hipchat
+    build-pipeline-plugin
+    clone-workspace-scm
+    matrix-combinations-parameter
+    job-exporter
+    email-ext
+    m2release
+    next-build-number
+    claim
+    cloudbees-folder
+    jira
+
+It is possible to customise the plugins that get added to the image by updating:
+
+    ./plugins_script/plugins.txt
+
+You don't need to worry about plugin dependencies, they are resolved when you build the image.
+
+Kudos to [yasn77] (https://github.com/yasn77/docker-jenkins.git) for the inspiration.
