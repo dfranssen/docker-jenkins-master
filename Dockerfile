@@ -8,7 +8,7 @@ ENV JENKINS_VER 1.574
 # Maven related
 # -------------
 ENV MAVEN_ROOT /var/lib/maven
-ENV MAVEN_HOME $MAVEN_ROOT/maven-$MAVEN_VERSION
+ENV MAVEN_HOME $MAVEN_ROOT/apache-maven-$MAVEN_VERSION
 ENV MAVEN_OPTS -Xms256m -Xmx512m
 
 RUN wget --no-verbose -O /tmp/apache-maven-$MAVEN_VERSION.tar.gz \
@@ -23,8 +23,6 @@ VOLUME ["/var/lib/maven"]
 
 # Jenkins related
 # ---------------
-VOLUME ["/var/lib/jenkins"]
-
 ENV JENKINS_HOME /var/lib/jenkins
 ENV JENKINS_JAVA_ARGS '-Djava.awt.headless=true'
 ENV JENKINS_MAXOPENFILES 8192
@@ -49,6 +47,8 @@ ADD ./jenkins_init_wrapper.sh /jenkins_init_wrapper.sh
 ADD ./plugins_script /plugins_script
 ADD ./start.sh /start.sh
 ADD ./config.xml $JENKINS_HOME/config.xml
+
+VOLUME ["/var/lib/jenkins"]
 
 RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/debian/binary/jenkins_${JENKINS_VER}_all.deb && \
         dpkg -i /tmp/jenkins_${JENKINS_VER}_all.deb ; \

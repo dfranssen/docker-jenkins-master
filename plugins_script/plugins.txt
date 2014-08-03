@@ -17,3 +17,9 @@ build-pipeline-plugin
 clone-workspace-scm
 matrix-combinations-parameter
 job-exporter
+email-ext
+m2release
+next-build-number
+claim
+cloudbees-folder
+jira
