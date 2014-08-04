@@ -46,7 +46,10 @@ ADD ./jenkins.sudoers /etc/sudoers.d/jenkins
 ADD ./jenkins_init_wrapper.sh /jenkins_init_wrapper.sh
 ADD ./plugins_script /plugins_script
 ADD ./start.sh /start.sh
-ADD ./config.xml $JENKINS_HOME/config.xml
+# Not possible to write to volume as the file is not there while running the container?
+#ADD ./config.xml $JENKINS_HOME/config.xml
+# So workaround. config.xml will be copied during startup script of jenkins if the xml is not existing
+ADD ./config.xml /plugins_script/config.xml
 
 VOLUME ["/var/lib/jenkins"]
 

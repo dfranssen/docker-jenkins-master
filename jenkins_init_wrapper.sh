@@ -41,6 +41,12 @@ do
     ln -s ${plugin} ${JENKINS_HOME}/plugins/
 done
 
+# Copy default config.xml if it is non-existing
+if [ ! -f ${JENKINS_HOME}/config.xml ]
+then
+	cp /plugins_script/config.xml ${JENKINS_HOME}
+fi 
+
 # Set JNLP slave port if the environment variable is set
 if [ -n "${JENKINS_SLAVE_JNLP}" ]
 then
