@@ -53,6 +53,9 @@ ADD ./config.xml /plugins_script/config.xml
 
 VOLUME ["/var/lib/jenkins"]
 
+#workaround: https://groups.google.com/forum/#!topic/docker-user/asLMWJQ7-0s
+RUN ln -s -f /bin/true /usr/bin/chfn
+
 RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/debian/binary/jenkins_${JENKINS_VER}_all.deb && \
         dpkg -i /tmp/jenkins_${JENKINS_VER}_all.deb ; \
         apt-get -fy install
