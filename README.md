@@ -5,7 +5,7 @@ docker-jenkins-master
     Exposed Ports : 8080 2812 22 36562 33848/udp
     Timezone : Europe/Brussels
 
-    Jenkins version : 1.574
+    Jenkins version : 1.575
     Jenkins Home : /var/lib/jenkins
 
     Maven version : 3.2.2
@@ -65,13 +65,13 @@ OpenSSH is also running, you can ssh to the container by exposing port 22 on you
 Plugins
 -------
 
-The following list of plugins come included in the container:
+The following list of plugins come included in the container (some dependencies are listed explicitly in order to have the latest version):
 
     config-file-provider
     envinject
     git
     git-client
-    git-server
+    github-api
     github
     greenballs
     multiple-scms
@@ -92,6 +92,7 @@ The following list of plugins come included in the container:
     claim
     cloudbees-folder
     jira
+    role-strategy
 
 It is possible to customise the plugins that get added to the image by updating:
 

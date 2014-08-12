@@ -3,7 +3,7 @@ FROM dfranssen/docker-base
 MAINTAINER Dirk Franssen "dirk.franssen@gmail.com"
 
 ENV MAVEN_VERSION 3.2.2
-ENV JENKINS_VER 1.574
+ENV JENKINS_VER 1.575
 
 # Maven related
 # -------------
