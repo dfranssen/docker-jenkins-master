@@ -45,7 +45,7 @@ done
 if [ ! -f ${JENKINS_HOME}/config.xml ]
 then
 	cp /plugins_script/config.xml ${JENKINS_HOME}
-fi 
+fi
 
 # Set JNLP slave port if the environment variable is set
 if [ -n "${JENKINS_SLAVE_JNLP}" ]

@@ -5,7 +5,7 @@ docker-jenkins-master
     Exposed Ports : 8080 2812 22 36562 33848/udp
     Timezone : Europe/Brussels
 
-    Jenkins version : 1.575
+    Jenkins version : 1.583
     Jenkins Home : /var/lib/jenkins
 
     Maven version : 3.2.2
@@ -23,7 +23,7 @@ Environment Variables
     JENKINS_PREFIX
         URL prefix. Default '/jenkins'
     JENKINS_ARGS
-        Start up arguements for Jenkins. Default '--webroot=/var/cache/jenkins/war --httpPort=8080 --ajp13Port=-1 --prefix=$JENKINS_PREFIX'
+        Start up arguments for Jenkins. Default '--webroot=/var/cache/jenkins/war --httpPort=8080 --ajp13Port=-1 --prefix=$JENKINS_PREFIX'
     JENKINS_SLAVE_JNLP
         JNLP port for Jenkins Slave communication. Default : 36562
     TZ
@@ -50,7 +50,7 @@ facilitate the backup/restore of the jenkins home folder, it is best to add the 
 in the run instruction of above.
 The data container could be started by running:
 
-    docker run -d --name myjenkins-data -v /var/lib/jenkins -v busybox:ubuntu-14.04 true
+    docker run -d --name myjenkins-data -v /var/lib/jenkins busybox:ubuntu-14.04 true
 
 Monit is used to control the start up and management of Jenkins (and SSHD). You can access the monit webserver
 by exposing port 2812 on the Docker host. The user name is `monit` and password can be found by running:
@@ -62,37 +62,29 @@ OpenSSH is also running, you can ssh to the container by exposing port 22 on you
 
     docker logs <CONTAINER_ID> 2>/dev/null | grep JENKINS_PASSWORD
 
+Furthermore, this Jenkins container is also capable of managing Docker containers on the host when the socket is bind-mount-in.
+Currently no need to run with the --privileged flag as no seperate Docker daemon is needed inside this jenkins container, but this is possible though :-)
+In order to know the host ip address make an alias as indicated in the following statements and pass it as an environment variable:
+
+    alias hostip="ip route show 0.0.0.0/0 | grep -Eo 'via \S+' | awk '{ print \$2 }'"
+    docker run -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_HOST==$(hostip) <CONTAINER_ID>
+
+This DOCKER_HOST would allow Jenkins to execute system tests against the new container he created with the application code. This container is bound to the DOCKER_HOST as the socket was bind in.
+
+If no DOCKER_HOST environment variable is set, the --privileged flag should be used and a Docker daemon will be enabled in this container.
+
 Plugins
 -------
 
 The following list of plugins come included in the container (some dependencies are listed explicitly in order to have the latest version):
 
-    config-file-provider
-    envinject
     git
-    git-client
-    github-api
-    github
     greenballs
-    multiple-scms
     parameterized-trigger
     promoted-builds
-    scm-sync-configuration
-    scriptler
-    swarm
-    xunit
     hipchat
     build-pipeline-plugin
-    clone-workspace-scm
-    matrix-combinations-parameter
-    job-exporter
-    email-ext
-    m2release
-    next-build-number
-    claim
-    cloudbees-folder
-    jira
-    role-strategy
+    bitbucket-oauth
 
 It is possible to customise the plugins that get added to the image by updating:
 

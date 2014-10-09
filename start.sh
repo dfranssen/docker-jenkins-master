@@ -1,4 +1,5 @@
 #!/bin/bash
+wrapdocker
 
 env | egrep "^JENKINS|^TZ" > /docker.env
 

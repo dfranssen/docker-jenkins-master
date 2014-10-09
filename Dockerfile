@@ -3,7 +3,10 @@ FROM dfranssen/docker-base
 MAINTAINER Dirk Franssen "dirk.franssen@gmail.com"
 
 ENV MAVEN_VERSION 3.2.2
-ENV JENKINS_VER 1.575
+ENV JENKINS_VER 1.583
+ENV DOCKER_VERSION 1.2.0
+
+ENV DOCKER_HOST UNKNOWN
 
 # Maven related
 # -------------
@@ -23,7 +26,10 @@ VOLUME ["/var/lib/maven"]
 
 # Jenkins related
 # ---------------
+# default jenkins home directory
 ENV JENKINS_HOME /var/lib/jenkins
+# set our user home to the same location
+ENV HOME /var/lib/jenkins
 ENV JENKINS_JAVA_ARGS '-Djava.awt.headless=true'
 ENV JENKINS_MAXOPENFILES 8192
 ENV JENKINS_PREFIX /jenkins
@@ -33,13 +39,16 @@ ENV DEBIAN_FRONTEND noninteractive
 
 EXPOSE 8080 2812 22 36562 33848/udp
 
+RUN echo deb http://archive.ubuntu.com/ubuntu precise universe > /etc/apt/sources.list.d/universe.list
+RUN apt-get update -qq
 RUN apt-get -y install \
             openssh-server \
             openjdk-7-jre-headless \
             monit \
             curl \
             git \
-            subversion
+            iptables \
+            ca-certificates
 
 ADD ./monit.d/ /etc/monit/conf.d/
 ADD ./jenkins.sudoers /etc/sudoers.d/jenkins
@@ -61,5 +70,14 @@ RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/
         apt-get -fy install
 
 RUN /plugins_script/download_plugins.sh
+
+# Docker related
+# ---------------
+# now we install docker in docker - thanks to https://github.com/jpetazzo/dind
+RUN curl -s -L -o /usr/local/bin/docker https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}
+ADD ./wrapdocker /usr/local/bin/wrapdocker
+RUN chmod +x /usr/local/bin/docker /usr/local/bin/wrapdocker
+# volume required to make docker in docker to work
+VOLUME ["/var/lib/docker"]
 
 ENTRYPOINT ["/bin/bash", "/start.sh"]
