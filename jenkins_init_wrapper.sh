@@ -53,14 +53,14 @@ then
   sed -e "s/<slaveAgentPort>.*/<slaveAgentPort>${JENKINS_SLAVE_JNLP}<\/slaveAgentPort>/" -i ${JENKINS_HOME}/config.xml
 fi
 
-# Copy the rsa keys if they are non-existing
-if [ ! -f ${JENKINS_HOME}/jenkins_id_rsa ]
+# Copy the rsa keys and add known hosts if they are non-existing
+if [ ! -d ${JENKINS_HOME}/.ssh ]
 then
-  cp /plugins_script/jenkins_id_rsa* ${JENKINS_HOME}
+  mkdir -p -d ${JENKINS_HOME}/.ssh
+  ssh-keyscan -t rsa,dsa bitbucket.org > /root/.ssh/known_hosts
+  cp /plugins_script/jenkins_id_rsa* ${JENKINS_HOME}/.ssh
 fi
-
-ssh-keyscan -t rsa bitbucket.org > /root/.ssh/known_hosts
-ID_RSA_PUB=$(more $JENKINS_HOME/jenkins_id_rsa.pub)
+ID_RSA_PUB=$(more $JENKINS_HOME/.ssh/jenkins_id_rsa.pub)
 echo ID_RSA_PUB=${ID_RSA_PUB}
 
 /etc/init.d/jenkins $1

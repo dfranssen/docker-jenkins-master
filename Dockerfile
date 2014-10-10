@@ -70,7 +70,7 @@ RUN /plugins_script/download_plugins.sh
 RUN ssh-keygen -f /plugins_script/jenkins_id_rsa -t rsa -N ''
 
 #set locale to UTF-8
-RUN sudo echo 'LC_ALL=en_US.UTF-8' > /etc/default/locale
+RUN sudo echo 'LC_ALL=C.UTF-8' > /etc/default/locale
 
 # Docker related
 # ---------------
