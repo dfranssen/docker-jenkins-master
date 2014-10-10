@@ -26,10 +26,7 @@ VOLUME ["/var/lib/maven"]
 
 # Jenkins related
 # ---------------
-# default jenkins home directory
 ENV JENKINS_HOME /var/lib/jenkins
-# set our user home to the same location
-ENV HOME /var/lib/jenkins
 ENV JENKINS_JAVA_ARGS '-Djava.awt.headless=true'
 ENV JENKINS_MAXOPENFILES 8192
 ENV JENKINS_PREFIX /jenkins
@@ -58,7 +55,7 @@ ADD ./start.sh /start.sh
 # Not possible to write to volume as the file is not there while running the container?
 #ADD ./config.xml $JENKINS_HOME/config.xml
 # So workaround. config.xml will be copied during startup script of jenkins if the xml is not existing
-ADD ./config.xml /plugins_script/config.xml
+#ADD ./config.xml /plugins_script/config.xml
 
 VOLUME ["/var/lib/jenkins"]
 
@@ -70,6 +67,8 @@ RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/
         apt-get -fy install
 
 RUN /plugins_script/download_plugins.sh
+RUN ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
+
 
 # Docker related
 # ---------------

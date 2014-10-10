@@ -39,11 +39,11 @@ Services
 When running the image, you can pass in environment variables that will affect the behaviour of Jenkins.
 An example, you change the Timezone by runnning:
 
-    docker run --env TZ=<TIMEZONE> -d <CONTAINER_ID>
+    docker run --env TZ=<TIMEZONE> -d dfranssen/docker-jenkins-master
 
 Or change Java heap size:
 
-    docker run --env JENKINS_JAVA_ARGS=-Xmx4g -d <CONTAINER_ID>
+    docker run --env JENKINS_JAVA_ARGS=-Xmx4g -d dfranssen/docker-jenkins-master
 
 If you want to preserve the volume after the container has been removed (e.g update of the image) or want to
 facilitate the backup/restore of the jenkins home folder, it is best to add the option `--volumes-from myjenkins-data`
@@ -61,6 +61,12 @@ OpenSSH is also running, you can ssh to the container by exposing port 22 on you
 `jenkins`. Password can be found by running:
 
     docker logs <CONTAINER_ID> 2>/dev/null | grep JENKINS_PASSWORD
+
+An id_rsa key pair is also generated and the contents of the public key can be found by:
+
+    docker logs <CONTAINER_ID> 2>/dev/null | grep ID_RSA_PUB
+
+bitbucket.org has been added to the ssh known_hosts.
 
 Furthermore, this Jenkins container is also capable of managing Docker containers on the host when the socket is bind-mount-in.
 Currently no need to run with the --privileged flag as no seperate Docker daemon is needed inside this jenkins container, but this is possible though :-)
