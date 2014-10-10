@@ -91,6 +91,8 @@ The following list of plugins come included in the container (some dependencies 
     hipchat
     build-pipeline-plugin
     bitbucket-oauth
+    clone-workspace-scm
+    cloudbees-folder
 
 It is possible to customise the plugins that get added to the image by updating:
 

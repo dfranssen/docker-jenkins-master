@@ -5,3 +5,5 @@ promoted-builds
 hipchat
 build-pipeline-plugin
 bitbucket-oauth
+clone-workspace-scm
+cloudbees-folder
