@@ -69,6 +69,8 @@ RUN curl -s -L -o /tmp/jenkins_${JENKINS_VER}_all.deb http://pkg.jenkins-ci.org/
 RUN /plugins_script/download_plugins.sh
 RUN ssh-keygen -f /plugins_script/jenkins_id_rsa -t rsa -N ''
 
+#set locale to UTF-8
+RUN sudo echo 'LC_ALL=en_US.UTF-8' > /etc/default/locale
 
 # Docker related
 # ---------------
