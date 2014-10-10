@@ -53,4 +53,10 @@ then
   sed -e "s/<slaveAgentPort>.*/<slaveAgentPort>${JENKINS_SLAVE_JNLP}<\/slaveAgentPort>/" -i ${JENKINS_HOME}/config.xml
 fi
 
+# Copy the rsa keys if they are non-existing
+if [ ! -f ${JENKINS_HOME}/jenkins_id_rsa ]
+then
+  cp /plugins_script/jenkins_id_rsa* ${JENKINS_HOME}
+fi
+
 /etc/init.d/jenkins $1
