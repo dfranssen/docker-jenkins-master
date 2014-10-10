@@ -1,7 +1,4 @@
 #!/bin/bash
-ssh-keyscan -t rsa bitbucket.org > /root/.ssh/known_hosts
-ID_RSA_PUB=$(more $JENKINS_HOME/jenkins_id_rsa.pub)
-echo ID_RSA_PUB=${ID_RSA_PUB}
 wrapdocker
 
 env | egrep "^JENKINS|^TZ" > /docker.env
